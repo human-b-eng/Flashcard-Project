@@ -7,6 +7,9 @@ import Study from "./CardComps/Study";
 import Deck from "./DeckComps/Deck";
 import { listDecks } from "../utils/api";
 import CreateDeck from "./DeckComps/CreateDeck";
+import EditCard from "./CardComps/EditCard";
+import AddCard from "./CardComps/AddCard";
+import EditDeck from "./DeckComps/EditDeck";
 
 function Layout() {
 
@@ -16,7 +19,6 @@ function Layout() {
       const loadDecks = async () => {
           const data = await listDecks()
           setDecks(data)
-          console.log("ONE",decks)
       }
       loadDecks()
       // eslint-disable-next-line 
@@ -29,25 +31,30 @@ function Layout() {
       <div className="container">
         <Switch>
           <Route exact path="/">
-            <Home decks={decks}/>
+            <Home decks={decks} setDeck={setDecks} />
           </Route>
           <Route path="/decks/new">
-            <CreateDeck />
+            <CreateDeck setDecks={setDecks} />
           </Route>
           <Route exact path="/decks/:deckId">
-            <Deck />
+            <Deck setDecks={setDecks} />
           </Route>
-          <Route path="/decks/:deckId/study">
+          <Route exact path="/decks/:deckId/study">
             <Study />
           </Route>
+          <Route exact path="/decks/:deckId/edit">
+            <EditDeck setDecks={setDecks}/>
+          </Route>
           <Route path="/decks/:deckId/cards/new">
-            <div>New Card</div>-
+            <AddCard />
+          </Route>
+          <Route path="/decks/:deckId/cards/:cardId/edit">
+            <EditCard />
           </Route>
           <Route>
             <NotFound />
           </Route>
         </Switch>
-        {/* TODO: Implement the screen starting here */}
       </div>
     </>
   );

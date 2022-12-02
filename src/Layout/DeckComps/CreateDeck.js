@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import { useHistory, Link } from "react-router-dom";
-import { createDeck } from "../../utils/api";
+import { createDeck, listDecks } from "../../utils/api";
 import DeckForm from "./DeckForm";
 
-export default function CreateDeck() {
+export default function CreateDeck({setDecks}) {
     const initialFormState = {
         name: "",
         description: ""
@@ -27,6 +27,8 @@ export default function CreateDeck() {
     };
     async function createNewDeck() {
         const createdDeck = await createDeck(newDeck);
+        listDecks().then(setDecks)
+        
         history.push(`/decks/${createdDeck.id}`);
     }
     createNewDeck();
@@ -44,8 +46,7 @@ export default function CreateDeck() {
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
                     <Link to="/">
-                        <i className="bi bi-house-door-fill"></i>
-                        Home
+                        <i className="oi oi-home px-1"></i>Home
                     </Link>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useHistory } from "react-router-dom";
-import { readDeck, deleteDeck, deleteCard } from "../../utils/api";
+import { readDeck, deleteDeck, deleteCard, listDecks } from "../../utils/api";
 
-export default function Deck() {
+export default function Deck({setDecks}) {
     const { deckId } = useParams();
     const [deck, setDeck] = useState({});
     const [cardList, setCardList] = useState([]);
@@ -15,6 +15,7 @@ export default function Deck() {
             setCardList(data.cards)
         }
         thisDeck()
+
         // eslint-disable-next-line 
     },[deckId])
  
@@ -25,8 +26,10 @@ export default function Deck() {
           async function deleteThisDeck() {
             await deleteDeck(deckId);
             history.go(0);
+            listDecks().then(setDecks)
           }
           deleteThisDeck();
+
         }
     }
 
@@ -48,7 +51,7 @@ export default function Deck() {
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item">
                         <Link to="/">
-                            <i className="oi oi-home"></i> Home
+                            <i className="oi oi-home px-1"></i>Home
                         </Link>
                     </li>
                     <li className="breadcrumb-item active" aria-current="page">
@@ -70,27 +73,33 @@ export default function Deck() {
                     <button className="btn btn-primary m-2"><span className="oi oi-plus"> Add Cards</span></button>
                 </Link>
                 <Link to="/" >
-                    <button onClick={()=>handleDeleteDeck} className="btn btn-danger m-2 ml-5"><span className="oi oi-trash"></span></button>
+                    <button onClick={()=>handleDeleteDeck(deck.id)} className="btn btn-danger m-2 ml-5"><span className="oi oi-trash"></span></button>
                 </Link>
             </div>
             <div>
-            <h2>Cards</h2>
-            <ul>
-                {cardList.map((card,i) => <li className="card container p-2" key={i}>
-                    <div className="row">
-                    <p className="m-2 col">{card.front}</p>
-                    <p className="m-2 col">{card.back}</p>
-                    </div>
-                    <div className="row justify-content-end mx-2">
-                        <Link to={`/decks/${deck.id}/cards/${card.id}/edit`} >
-                            <button className="btn btn-dark m-2"><span className="oi oi-pencil"></span> Edit</button>
-                        </Link>
-                        <Link to="/" >
-                            <button onClick={()=>handleDeleteCard(card.id)} className="btn btn-danger m-2"><span className="oi oi-trash"></span></button>
-                        </Link>
-                    </div>
-                </li>)}
-            </ul>
+            <div>
+                {cardList.length > 0 ? (
+                <div> 
+                    <h2>Cards</h2>
+                    <ul>
+                        {cardList.map((card,i) => <li className="card container p-2" key={i}>
+                        <div className="row">
+                        <p className="m-2 col">{card.front}</p>
+                        <p className="m-2 col">{card.back}</p>
+                        </div>
+                        <div className="row justify-content-end mx-2">
+                            <Link to={`/decks/${deck.id}/cards/${card.id}/edit`} >
+                                <button className="btn btn-dark m-2"><span className="oi oi-pencil"></span> Edit</button>
+                            </Link>
+                            <Link to={`/decks/${deck.id}`} >
+                                <button onClick={()=>handleDeleteCard(card.id)} className="btn btn-danger m-2"><span className="oi oi-trash"></span></button>
+                            </Link>
+                        </div>
+                        </li>)}
+                    </ul>
+                </div>
+                ) : (null)}
+            </div>
             </div>
         </div>
     )

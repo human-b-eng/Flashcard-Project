@@ -15,7 +15,6 @@ export default function Study() {
         const thisDeck = async () => {
             const data = await readDeck(deckId)
             setDeck(data)
-            //const cards = data.cards
             setCardList(data.cards)
         }
         thisDeck()

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { readCard, updateCard } from "../../utils/api";
+import { useHistory, useParams, Link } from "react-router-dom";
+import { readCard, updateCard, readDeck } from "../../utils/api";
 import CardForm from "./CardForm";
 
-export default function EditCard({ deckId}) {
+export default function EditCard() {
     const history = useHistory();
-    const { cardId } = useParams()
+    const { deckId, cardId } = useParams();
     const [card, setCard] = useState({});
+    const [deck, setDeck] = useState({});
   
     useEffect(() => {
       async function loadCard() {
@@ -15,6 +16,15 @@ export default function EditCard({ deckId}) {
       }
       loadCard();
     }, [deckId, cardId]);
+
+    useEffect(()=> {
+        const thisDeck = async () => {
+            const data = await readDeck(deckId)
+            setDeck(data)
+        }
+        thisDeck()
+        // eslint-disable-next-line 
+    },[deckId])
   
     function handleChange({ target }) {
       setCard({
@@ -28,7 +38,7 @@ export default function EditCard({ deckId}) {
       async function UpdateCard() {
           await updateCard(card);
           history.push(`/decks/${deckId}`);
-          history.go(0);
+          //history.go(0);
       }
       UpdateCard();
     }
@@ -38,12 +48,32 @@ export default function EditCard({ deckId}) {
     }
   
     return (
-        <CardForm
-          card={card}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          handleDoneAndCancel={handleCancel}
-          doneOrCancel = "Cancel"
-        />
+        <div>
+            <nav aria-label="breadcrumb">
+            <ol className="breadcrumb">
+                <li className="breadcrumb-item">
+                    <Link to="/">
+                        <i className="oi oi-home px-1"></i>Home
+                    </Link>
+                </li>
+                <li className="breadcrumb-item">
+                    <Link to={`/decks/${deckId}`}>
+                        {deck.name}
+                    </Link>
+                </li>
+                <li className="breadcrumb-item active" aria-current="page">
+                    Edit
+                </li>
+            </ol>
+            </nav>
+            <h2>{deck.name}: Edit Card</h2>
+            <CardForm
+              card={card}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              handleDoneAndCancel={handleCancel}
+              doneOrCancel = "Cancel"
+            />
+        </div>
     );
 }

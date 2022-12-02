@@ -1,8 +1,8 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
-import { deleteDeck } from "../../utils/api";
+import { deleteDeck, listDecks } from "../../utils/api";
 
-export default function DeckList({decks}) {
+export default function DeckList({decks, setDecks}) {
     const history = useHistory();
 
     function handleDelete(deckId) {
@@ -12,6 +12,7 @@ export default function DeckList({decks}) {
         async function deleteThisDeck() {
             await deleteDeck(deckId);
             history.go(0);
+            listDecks().then(setDecks)
         }
         deleteThisDeck();
         }
